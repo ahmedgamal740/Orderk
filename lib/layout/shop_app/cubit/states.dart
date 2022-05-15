@@ -107,6 +107,7 @@ class ShopErrorUpdateAddressState extends ShopStates{
   ShopErrorUpdateAddressState(this.error);
 }
 class ShopChangeCheckState extends ShopStates{}
+class ShopCheckValidateCreditCardState extends ShopStates{}
 //add order
 class ShopLoadingAddOrderState extends ShopStates{}
 class ShopSuccessAddOrderState extends ShopStates{}

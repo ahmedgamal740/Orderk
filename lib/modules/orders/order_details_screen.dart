@@ -118,8 +118,6 @@ class OrderDetailsScreen extends StatelessWidget {
           height: 10,
         ),
         Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '${model.name}',
@@ -139,7 +137,7 @@ class OrderDetailsScreen extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 height: 1.2,
                 color: Colors.white,
               ),
@@ -212,25 +210,6 @@ class OrderDetailsScreen extends StatelessWidget {
         Row(
           children: [
             const Text(
-              'Discount',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              '${model.data!.discount!.round()} EGP',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            const Text(
               'Vat',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -259,6 +238,25 @@ class OrderDetailsScreen extends StatelessWidget {
             const Spacer(),
             Text(
               '${model.data!.total!.round()} EGP',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text(
+              'Payment Method',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '${model.data!.paymentMethod}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

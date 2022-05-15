@@ -8,17 +8,17 @@ import 'package:orderk/shared/styles/colors.dart';
 
 import '../../models/shop_app/get_carts.dart';
 import '../../shared/components/constants.dart';
+import '../credit_card/credit_card_screen.dart';
 class OrderScreen extends StatelessWidget {
   GetCarts? cartsModel;
   dynamic vat;
   dynamic total;
   OrderScreen({Key? key, this.cartsModel, this.vat, this.total}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ShopCubit, ShopStates>(
       listener: (context, state) {
-        if (state is ShopSuccessAddOrderState){
+        if (state is ShopSuccessAddOrderState && ShopCubit.get(context).isCheckedCash){
           cartsModel!.data!.subTotal = 0;
           vat = 0;
           total = 0;
@@ -43,22 +43,28 @@ class OrderScreen extends StatelessWidget {
             ),
           );
         }
+        if(ShopCubit.get(context).isCheckedOnline){
+          navigateAndFinish(
+              context,
+              CreditCardScreen(),
+          );
+        }
       },
       builder: (context, state) {
         var cubit = ShopCubit.get(context);
 
-        int num = 0;
+
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+            title: const Text('Checkout'),
+          ),
           body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if(state is ShopLoadingAddOrderState)
                 const LinearProgressIndicator(),
               Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                ),
-                elevation: 10,
+                elevation: 20,
                 shadowColor: defaultColor,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: Padding(
@@ -84,7 +90,9 @@ class OrderScreen extends StatelessWidget {
                             ),
                             const Spacer(),
                             defaultTextButton(
-                                function: (){},
+                                function: (){
+                                  print(cubit.isValidate);
+                                },
                                 text: 'change'
                             ),
                           ],
@@ -135,36 +143,15 @@ class OrderScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                ),
-                elevation: 10,
-                shadowColor: defaultColor,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
                       Row(
                         children: [
                           Checkbox(
-                            value: cubit.isChecked,
+                            value: cubit.isCheckedCash,
                             onChanged: (value){
-                            cubit.changeCheckedOrder(value!);
-                            if(value){
-                              num = 1;
-                              print(num);
-                            }
-                          },
+                              cubit.num = 1;
+                              cubit.changeCheckedOrder(value!);
+                              cubit.isCheckedOnline = false;
+                            },
                           ),
                           const SizedBox(
                             width: 5,
@@ -182,8 +169,12 @@ class OrderScreen extends StatelessWidget {
                       Row(
                         children: [
                           Checkbox(
-                            value: false,
-                            onChanged: (value){},
+                            value: cubit.isCheckedOnline,
+                            onChanged: (value){
+                              cubit.num = 2;
+                              cubit.changeCheckedOrder(value!);
+                              cubit.isCheckedCash = false;
+                            },
                           ),
                           const SizedBox(
                             width: 5,
@@ -192,23 +183,11 @@ class OrderScreen extends StatelessWidget {
                             'Online',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.grey,
                               fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Text(
-                            'Sorry, Unavailable',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
                             ),
                           ),
                         ],
                       ),
-                      myDivider(),
                       const SizedBox(
                         height: 10,
                       ),
@@ -217,7 +196,7 @@ class OrderScreen extends StatelessWidget {
                           const Text(
                             'Subtotal',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold
                             ),
                           ),
                           const Spacer(),
@@ -234,7 +213,7 @@ class OrderScreen extends StatelessWidget {
                           const Text(
                             'Vat',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold
                             ),
                           ),
                           const Spacer(),
@@ -251,7 +230,7 @@ class OrderScreen extends StatelessWidget {
                           const Text(
                             'Total',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold
                             ),
                           ),
                           const Spacer(),
@@ -268,11 +247,10 @@ class OrderScreen extends StatelessWidget {
                       ),
                       defaultButton(
                           function: (){
-                            if(cubit.isChecked && cartsModel!.data!.subTotal != 0){
-                              num = 1;
+                            if(cubit.isCheckedCash && cartsModel!.data!.subTotal != 0){
                               cubit.addOrder(
                                   addressId: cubit.addressModel!.data!.address!.last.id!,
-                                  paymentMethod: num
+                                  paymentMethod: cubit.num
                               );
                             }else{
                               showToast(context,
@@ -280,6 +258,7 @@ class OrderScreen extends StatelessWidget {
                                   state: ToastStates.error
                               );
                             }
+
                           },
                           text: 'payment'
                       ),

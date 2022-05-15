@@ -346,10 +346,25 @@ class ShopCubit extends Cubit<ShopStates>{
     });
   }
 
-  bool isChecked = false;
-  void changeCheckedOrder(bool value){
-      isChecked = !isChecked;
+  bool isCheckedCash = false;
+  bool isCheckedOnline = false;
+  int num = 0;
+  void changeCheckedOrder(var value){
+    if(num == 1){
+      isCheckedCash = !isCheckedCash;
       emit(ShopChangeCheckState());
+    }
+    if(num == 2){
+      isCheckedOnline = !isCheckedOnline;
+      emit(ShopChangeCheckState());
+    }
+  }
+  bool isValidate = false;
+  void validateCreditCard(bool value){
+    if(value){
+      isValidate = true;
+      emit(ShopCheckValidateCreditCardState());
+    }
   }
   void addOrder({
     required int addressId,

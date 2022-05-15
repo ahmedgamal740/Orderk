@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.0.13
   smooth_page_indicator: ^1.0.0+2
   fluttertoast: ^8.0.9
+  flutter_credit_card: ^3.0.1
   custom_dialog: ^0.0.2
   carousel_slider: ^4.0.0
 dev_dependencies:
